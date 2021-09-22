@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-reboot.min.css">
+    <link rel="stylesheet" href="css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row mt-4">
+
+            <!-- GLOBAL TABLE DATA -->
+            <div class="col-md-5">
+                <div class="col-md-12 my-2 ">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6 ">
+                            <h3>Global Data</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 table-bordered table-wrapper-scroll-y my-custom-scrollbar">
+                    <table class="table table-hover table-warning">
+                        <tbody id="global-wise">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- END GLOBAL TABLE DATA -->
+
+            <!-- COUNTRY TABLE DATA -->
+            <div class="col-md-7">
+                <div class="col-md-12 my-2 ">
+                    <div class="row justify-content-between">
+                        <div class="col-md-6 ">
+                            <h3>Country Wise Data</h3>
+                        </div>
+                        <div class="col-md-6 ">
+                            <input type="text" placeholder="Search Country" name="" id="search-country"
+                                class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 table-bordered table-wrapper-scroll-y my-custom-scrollbar">
+                    <table class="table table-hover table-danger">
+                        <thead>
+                            <tr>
+                                <td>Sno.</td>
+                                <td>Country</td>
+                                <td>New Confirmed</td>
+                                <td>New Deaths</td>
+                                <td>New Recovered</td>
+                                <td>Total Confirmed</td>
+                                <td>Total Deaths</td>
+                                <td>Total Recovered</td>
+                            </tr>
+                        </thead>
+                        <tbody id="country-wise">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- END COUNTRY TABLE DATA -->
+
+
+        </div>
+
+        <script src="js/jquery.js"></script>
+        <script src="js/bootstrap.js"></script>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script>
+            $(document).ready(function () {
+
+                // GLOBAL WISE DATA
+                $.ajax({
+                    url: "https://api.covid19api.com/summary",
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        $.each(data.Global, function (key, value) {
+                            $("#global-wise").append(`
+                            <tr><td><b>${key}</b></td><td>${value}</td></tr>
+                        `)
+                        })
+                    }
+                })
+
+
+                $.ajax({
+                    url: "https://api.covid19api.com/summary",
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var Sno = 1
+                        $.each(data.Countries, function (key, value) {
+                            $("#country-wise").append(`
+                            <tr>
+                                <td>${Sno}</td>
+                                <td><b>${value.Country}</b></td>
+                                <td>${value.NewConfirmed}</td>
+                                <td>${value.NewDeaths}</td>
+                                <td>${value.NewRecovered}</td>
+                                <td>${value.TotalConfirmed}</td>
+                                <td>${value.TotalDeaths}</td>
+                                <td>${value.TotalRecovered}</td>
+                            </tr>
+                        `)
+                            Sno++;
+                        })
+                    }
+                });
+                $("#search-country").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $("#country-wise tr").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+            })
+        </script>
+</body>
+
+</html>
